@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Autómatas - Expresiones Regulares</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Configuración de Tailwind para modo oscuro -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Habilita el modo oscuro basado en clases
+        };
+    </script>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900 p-5">
+    <div class="mt-5">
+        <button onclick="toggleDarkMode()" id="theme-toggle" class="bg-gray-500 text-white p-2 rounded">
+            <i id="theme-icon" class="fas fa-sun"></i> <!-- Icono de sol por defecto -->
+        </button>
+    </div>
+    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h1 class="text-xl font-bold text-center mb-4 dark:text-white">REGISTRO DE ESTUDIANTES</h1>        <form id="studentForm" class="space-y-4">
+            <input type="text" id="name" placeholder="Nombre"
+                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+            <input type="text" id="code" placeholder="Código (8 dígitos, no inicia en 0)"
+                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+            <input type="date" id="admissionDate" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+            <input type="text" id="address" placeholder="Dirección"
+                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+            <input type="text" id="landline" placeholder="Teléfono fijo (6056XXXXXX)"
+                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+            <input type="text" id="mobile" placeholder="Teléfono celular (3XXXXXXXXX)"
+                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+            <input type="email" id="email" placeholder="Correo Electrónico"
+                class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+
+            <div class="flex justify-center">
+                <button type="submit"
+                    class="relative flex items-center px-6 py-3 overflow-hidden font-medium transition-all bg-indigo-500 rounded-md group">
+                    <span
+                        class="absolute top-0 right-0 inline-block w-4 h-4 transition-all duration-500 ease-in-out bg-indigo-700 rounded group-hover:-mr-4 group-hover:-mt-4">
+                        <span
+                            class="absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white"></span>
+                    </span>
+                    <span
+                        class="absolute bottom-0 rotate-180 left-0 inline-block w-4 h-4 transition-all duration-500 ease-in-out bg-indigo-700 rounded group-hover:-ml-4 group-hover:-mb-4">
+                        <span
+                            class="absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white"></span>
+                    </span>
+                    <span
+                        class="absolute bottom-0 left-0 w-full h-full transition-all duration-500 ease-in-out delay-200 -translate-x-full bg-indigo-600 rounded-md group-hover:translate-x-0"></span>
+                    <span
+                        class="relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-white">Registrar</span>
+                </button>
+            </div>
+        </form>
+        <div class="relative overflow-x-auto mt-5">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Nombre</th>
+                        <th scope="col" class="px-6 py-3">Código</th>
+                        <th scope="col" class="px-6 py-3">Fecha de Admisión</th>
+                        <th scope="col" class="px-6 py-3">Dirección</th>
+                        <th scope="col" class="px-6 py-3">Teléfono Fijo</th>
+                        <th scope="col" class="px-6 py-3">Celular</th>
+                        <th scope="col" class="px-6 py-3">Correo Electrónico</th>
+                        <th scope="col" class="px-6 py-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsList">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-5">
+            <h2 class="text-lg font-semibold dark:text-white">Exportar Registros</h2>
+            <button onclick="exportToText()"
+                class="cursor-pointer transition-all bg-gray-700 text-white px-6 py-2 rounded-lg border-gray-400 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px] hover:shadow-xl hover:shadow-gray-300 shadow-gray-300 active:shadow-none">
+                Texto
+            </button>
+            <button onclick="exportToExcel()"
+                class="cursor-pointer transition-all bg-green-700 text-white px-6 py-2 rounded-lg border-green-400 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px] hover:shadow-xl hover:shadow-green-300 shadow-green-300 active:shadow-none">
+                Excel
+            </button>
+            <button onclick="exportToXML()"
+                class="cursor-pointer transition-all bg-yellow-700 text-white px-6 py-2 rounded-lg border-yellow-400 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px] hover:shadow-xl hover:shadow-yellow-300 shadow-yellow-300 active:shadow-none">
+                XML
+            </button>
+            <button onclick="exportToJSON()"
+                class="cursor-pointer transition-all bg-blue-700 text-white px-6 py-2 rounded-lg border-blue-400 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px] hover:shadow-xl hover:shadow-blue-300 shadow-blue-300 active:shadow-none">
+                JSON
+            </button>
+        </div>
+
+       
+    </div>
+
+    <script>
+        const studentForm = document.getElementById("studentForm");
+        const recordsList = document.getElementById("recordsList");
+        let students = JSON.parse(localStorage.getItem("students")) || [];
+
+        function saveStudents() {
+            localStorage.setItem("students", JSON.stringify(students));
+        }
+
+        function renderRecords() {
+            recordsList.innerHTML = students.map((student, index) => `
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td class="px-6 py-4 dark:text-white">${student.name}</td>
+                    <td class="px-6 py-4 dark:text-white">${student.code}</td>
+                    <td class="px-6 py-4 dark:text-white">${student.admissionDate}</td>
+                    <td class="px-6 py-4 dark:text-white">${student.address}</td>
+                    <td class="px-6 py-4 dark:text-white">${student.landline}</td>
+                    <td class="px-6 py-4 dark:text-white">${student.mobile}</td>
+                    <td class="px-6 py-4 dark:text-white">${student.email}</td>
+                    <td class="px-6 py-4">
+                        <button onclick="deleteStudent(${index})"
+                        class="flex justify-center items-center gap-2 w-28 h-12 cursor-pointer rounded-md shadow-2xl text-white font-semibold bg-gradient-to-r from-[#fb7185] via-[#e11d48] to-[#be123c] hover:shadow-xl hover:shadow-red-500 hover:scale-105 duration-300 hover:from-[#be123c] hover:to-[#fb7185]"
+                        >
+                        <svg viewBox="0 0 15 15" class="w-5 fill-white">
+                            <svg
+                            class="w-6 h-6"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            >
+                            <path
+                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                stroke-linejoin="round"
+                                stroke-linecap="round"
+                            ></path>
+                            </svg>
+                            Button
+                        </svg>
+                        </button>
+                    </td>
+                </tr>`
+            ).join("");
+        }
+
+        function deleteStudent(index) {
+            students.splice(index, 1); // Elimina el estudiante en la posición `index`
+            saveStudents(); // Guarda los cambios en localStorage
+            renderRecords(); // Vuelve a renderizar la tabla
+        }
+
+        studentForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const name = document.getElementById("name").value.trim();
+            const code = document.getElementById("code").value.trim();
+            const admissionDate = document.getElementById("admissionDate").value;
+            const address = document.getElementById("address").value.trim();
+            const landline = document.getElementById("landline").value.trim();
+            const mobile = document.getElementById("mobile").value.trim();
+            const email = document.getElementById("email").value.trim();
+
+            const nameRegex = /^[a-zA-Z ]+$/;
+            const codeRegex = /^[1-9][0-9]{7}$/;
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            const addressRegex = /^[a-zA-Z0-9#\- ]+$/;
+            const landlineRegex = /^6056\d{6}$/;
+            const mobileRegex = /^3\d{9}$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!nameRegex.test(name) || !codeRegex.test(code) || !dateRegex.test(admissionDate) ||
+                !addressRegex.test(address) || !landlineRegex.test(landline) || !mobileRegex.test(mobile) ||
+                !emailRegex.test(email)) {
+                alert("Datos no válidos, verifique los campos");
+                return;
+            }
+
+            const student = { name, code, admissionDate, address, landline, mobile, email };
+            students.push(student);
+            saveStudents();
+            renderRecords();
+            studentForm.reset();
+        });
+
+        function exportToText() {
+            const text = students.map(student => Object.values(student).join(", ")).join("\n");
+            downloadFile("Estudiantes.txt", text);
+        }
+
+        function exportToExcel() {
+            let csvContent = students.map(student => Object.values(student).join(",")).join("\n");
+            downloadFile("Estudiantes.csv", csvContent, "text/csv");
+        }
+
+        function exportToXML() {
+            let xml = `<?xml version='1.0' encoding='UTF-8'?><students>` + students.map(student =>
+                `<student><name>${student.name}</name><code>${student.code}</code><admissionDate>${student.admissionDate}</admissionDate>` +
+                `<address>${student.address}</address><landline>${student.landline}</landline><mobile>${student.mobile}</mobile>` +
+                `<email>${student.email}</email></student>`).join("") + "</students>";
+            downloadFile("Estudiantes.xml", xml);
+        }
+
+        function exportToJSON() {
+            const json = JSON.stringify(students, null, 2);
+            downloadFile("Estudiantes.json", json);
+        }
+
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: "text/plain" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        renderRecords();
+    </script>
+</body>
+
+</html>
